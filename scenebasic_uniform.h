@@ -9,13 +9,16 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "helper/torus.h"
+#include "helper/plane.h"
+#include "helper/objmesh.h"
 
 class SceneBasic_Uniform : public Scene
 {
 private:
     GLSLProgram prog;
     glm::mat4 rotationMatrix;
-    Torus torus;
+    Plane plane; // plane surface
+    std::unique_ptr<ObjMesh> mesh; // pig mesh
 
     void compile();
     void setMatrices();
