@@ -2,6 +2,9 @@
 
 in vec3 Position;
 in vec3 Normal;
+in vec2 TexCoord;
+
+layout (binding = 0) uniform sampler2D Tex1;
 
 uniform struct SpotLightInfo {
 	vec3 Position; // Position in cam coords
@@ -23,7 +26,9 @@ layout( location = 0 ) out vec4 FragColor;
 
 vec3 blinnPhongSpot( vec3 position, vec3 n )
 {
-	vec3 ambient = Material.Ka * Spot.La; //calculate ambient
+	vec3 texColor = texture(Tex1, TexCoord).rgb;
+
+	vec3 ambient = Spot.La * texColor; //calculate ambient
 	vec3 s = Spot.Position - ( Position * 1.0f ); //calculate s vector
 	float cosAng = dot(-s, normalize(Spot.Direction)); //cosine of the angle
 	float angle = acos( cosAng ); //gives you the actual angle

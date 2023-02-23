@@ -18,6 +18,7 @@ using std::endl;
 
 #include "helper/glutils.h"
 #include "helper/torus.h"
+#include "helper/texture.h"
 
 using glm::vec3;
 using glm::mat4;
@@ -33,13 +34,19 @@ void SceneBasic_Uniform::initScene()
 
     glEnable(GL_DEPTH_TEST);
 
-    view = glm::lookAt(vec3(5.0f, 5.0f, 7.5f), vec3(0.0f, 0.75f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+    view = glm::lookAt(vec3(1.0f, 1.25f, 1.25f), vec3(0.0f, 0.0f, 0.0f),
+        vec3(0.0f, 1.0f, 0.0f));
     projection = mat4(1.0f);
 
     prog.setUniform("Spot.L", vec3(0.9f));
     prog.setUniform("Spot.La", vec3(0.5f));
     prog.setUniform("Spot.Exponent", 50.0f);
     prog.setUniform("Spot.Cutoff", glm::radians(15.0f));
+
+    GLuint texID = Texture::loadTexture("../Project_Template/media/texture/brick1.jpg");
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texID);
 }
 
 void SceneBasic_Uniform::compile()
@@ -80,27 +87,7 @@ void SceneBasic_Uniform::render()
     model = glm::rotate(model, glm::radians(45.0f), vec3(0.0f, 1.0f, 0.0f));
     model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
     setMatrices();
-    teapot.render();
-
-    prog.setUniform("Material.Kd", 0.2f, 0.55f, 0.9f);
-    prog.setUniform("Material.Ks", 0.95f, 0.95f, 0.95f);
-    prog.setUniform("Material.Ka", 0.2f * 0.3f, 0.55f * 0.3f, 0.9f * 0.3f);
-    prog.setUniform("Material.Shininess", 100.0f);
-
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(-1.0f, 0.75f, 3.0f));
-    model = glm::rotate(model, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
-    setMatrices();
-    torus.render();
-
-    prog.setUniform("Material.Kd", 0.7f, 0.7f, 0.7f);
-    prog.setUniform("Material.Ks", 0.9f, 0.9f, 0.9f);
-    prog.setUniform("Material.Ka", 0.2f, 0.2f, 0.2f);
-    prog.setUniform("Material.Shininess", 180.0f);
-
-    model = mat4(1.0f);
-    setMatrices();
-    plane.render();
+    cube.render();
 }
 
 void SceneBasic_Uniform::setMatrices()
