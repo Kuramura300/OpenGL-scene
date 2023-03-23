@@ -57,7 +57,7 @@ void main()
 
     Colour = vec3(0.0);
     for( int i = 0; i < 3; i++ )
-        Colour += phongModel( i, camCoords, n ); // What is camCoords?
+        Colour += phongModel( i, camCoords, n );
 
     gl_Position = MVP * vec4(VertexPosition,1.0);
 }
