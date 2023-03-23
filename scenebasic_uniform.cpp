@@ -24,7 +24,8 @@ using glm::mat4;
 
 SceneBasic_Uniform::SceneBasic_Uniform() : plane(10.0f, 10.0f, 100, 100)
 {
-    mesh = ObjMesh::load("../Project_Template/media/pig_triangulated.obj", true);
+    meshes.push_back(ObjMesh::load("../Project_Template/media/charactermodel.obj", true));
+    meshes.push_back(ObjMesh::load("../Project_Template/media/charactermodel2.obj", true));
 }
 
 void SceneBasic_Uniform::initScene()
@@ -86,9 +87,18 @@ void SceneBasic_Uniform::render()
     prog.setUniform("Material.Shininess", 180.0f);
 
     model = mat4(1.0f);
+    model = glm::translate(model, vec3(-0.2f, 0, -0.5f));
     model = glm::rotate(model, glm::radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
     setMatrices();
-    mesh->render();
+    meshes[0]->render();
+
+    model = mat4(1.0f);
+    model = glm::translate(model, vec3(-0.45f, 0.1f, -0.5f));
+    model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+    setMatrices();
+    meshes[1]->render();
 
     prog.setUniform("Material.Kd", 0.1f, 0.1f, 0.1f);
     prog.setUniform("Material.Ks", 0.9f, 0.9f, 0.9f);

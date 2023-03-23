@@ -18,7 +18,7 @@ private:
     GLSLProgram prog;
     glm::mat4 rotationMatrix;
     Plane plane; // plane surface
-    std::unique_ptr<ObjMesh> mesh; // pig mesh
+    std::vector<std::unique_ptr<ObjMesh>> meshes; // pig mesh
 
     void compile();
     void setMatrices();
