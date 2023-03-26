@@ -8,7 +8,6 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "helper/torus.h"
 #include "helper/plane.h"
 #include "helper/objmesh.h"
 

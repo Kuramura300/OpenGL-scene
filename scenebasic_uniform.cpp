@@ -17,7 +17,6 @@ using std::endl;
 #include <sstream>
 
 #include "helper/glutils.h"
-#include "helper/torus.h"
 #include "helper/texture.h"
 
 using glm::vec3;

@@ -42,12 +42,6 @@
     <ClCompile Include="scenebasic_uniform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="helper\teapot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="helper\torus.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="helper\trianglemesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -96,15 +90,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="helper\trianglemesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="helper\teapot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="helper\teapotdata.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="helper\torus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="helper\drawable.h">
