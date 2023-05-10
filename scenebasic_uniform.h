@@ -21,6 +21,7 @@ private:
     std::vector<std::unique_ptr<ObjMesh>> meshes; // pig mesh
     SkyBox sky; //skybox
     float angle, tPrev, rotSpeed;
+    GLuint textureIDs[5];
 
     void compile();
     void setMatrices();
