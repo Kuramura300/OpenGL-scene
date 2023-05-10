@@ -25,6 +25,12 @@ uniform struct MaterialInfo {
     float Shininess; // Specular shininess factor
 } Material;
 
+uniform struct FogInfo {
+    float MaxDist;
+    float MinDist;
+    vec3 Colour;
+} Fog;
+
 // Phong shading
 vec3 phongModel( int light, vec3 position, vec3 n )
 {
@@ -54,6 +60,11 @@ vec3 phongModel( int light, vec3 position, vec3 n )
 
 void main()
 {
+    // Calculate fog
+    float dist = abs(VertexPosition.z);
+    float fogFactor = (Fog.MaxDist - dist) / (Fog.MaxDist - Fog.MinDist);
+    fogFactor = clamp(fogFactor, 0.0, 1.0);
+
     vec3 n = normalize( NormalMatrix * VertexNormal );
 
     vec3 camCoords = vec3(0.0);
@@ -61,6 +72,8 @@ void main()
     Colour = vec3(0.0);
     for( int i = 0; i < 3; i++ )
         Colour += phongModel( i, camCoords, n );
+
+    Colour = mix(Fog.Colour, Colour, fogFactor);
 
     Vec = VertexPosition;
 
