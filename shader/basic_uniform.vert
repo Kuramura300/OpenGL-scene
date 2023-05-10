@@ -6,6 +6,7 @@ layout (location = 2) in vec2 VertexTexCoord;
 layout (binding = 0) uniform sampler2D Tex1;
 
 out vec3 Colour;
+out vec3 Vec;
 
 uniform mat4 ModelViewMatrix;
 uniform mat3 NormalMatrix;
@@ -60,6 +61,8 @@ void main()
     Colour = vec3(0.0);
     for( int i = 0; i < 3; i++ )
         Colour += phongModel( i, camCoords, n );
+
+    Vec = VertexPosition;
 
     gl_Position = MVP * vec4(VertexPosition,1.0);
 }

@@ -22,7 +22,8 @@ using std::endl;
 using glm::vec3;
 using glm::mat4;
 
-SceneBasic_Uniform::SceneBasic_Uniform() : plane(10.0f, 10.0f, 100, 100)
+SceneBasic_Uniform::SceneBasic_Uniform() : plane(10.0f, 10.0f, 100, 100), angle(0.0f), tPrev(0.0f),
+rotSpeed(glm::pi<float>() / 28.0f), sky(100.0f)
 {
     // Load models from file
     meshes.push_back(ObjMesh::load("../Project_Template/media/charactermodel.obj", true));
@@ -38,6 +39,9 @@ void SceneBasic_Uniform::initScene()
     // Setup camera view
     view = glm::lookAt(vec3(0.5f, 0.75f, 0.75f), vec3(0.0f, 0.25f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
     projection = mat4(1.0f);
+
+    // Set initial angle
+    angle = glm::radians(90.0f);
 
     // Setup lights
     float x, z;
@@ -78,7 +82,15 @@ void SceneBasic_Uniform::compile()
 
 void SceneBasic_Uniform::update( float t )
 {
-	
+    float deltaT = t - tPrev;
+
+    if (tPrev == 0.0f) deltaT = 0.0f;
+
+    tPrev = t;
+
+    angle += rotSpeed * deltaT;
+
+    if (angle > glm::two_pi<float>()) angle -= glm::two_pi<float>();
 }
 
 void SceneBasic_Uniform::render()
@@ -86,10 +98,30 @@ void SceneBasic_Uniform::render()
     glClear(GL_COLOR_BUFFER_BIT);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    // Draw first character
-    GLuint texID = Texture::loadTexture("../Project_Template/media/texture/BlueGradient.png");
+    // Load textures
+    GLuint textureIDs[4];
+    textureIDs[0] = Texture::loadCubeMap("../Project_Template/media/texture/cube/skybox/sky");
+    textureIDs[1] = Texture::loadTexture("../Project_Template/media/texture/BlueGradient.png");
+    textureIDs[2] = Texture::loadTexture("../Project_Template/media/texture/BlackGradient.png");
+    textureIDs[3] = Texture::loadTexture("../Project_Template/media/texture/meadow.jpg");
+
+    // Skybox
+    vec3 cameraPos = vec3(3.0f * cos(angle), 1.0f, 3.0f * sin(angle));
+    view = glm::lookAt(cameraPos, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+
+    prog.use();
+    model = mat4(1.0f);
+    setMatrices();
+
+    // Activate and bind texture
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureIDs[0]);
+
+    sky.render();
+
+    // Draw first character
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
 
     prog.setUniform("Material.Kd", 0.1f, 0.1f, 0.1f);
     prog.setUniform("Material.Ks", 0.9f, 0.9f, 0.9f);
@@ -110,9 +142,8 @@ void SceneBasic_Uniform::render()
     model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
     setMatrices();
 
-    texID = Texture::loadTexture("../Project_Template/media/texture/BlackGradient.png");
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texID);
+    glBindTexture(GL_TEXTURE_2D, textureIDs[2]);
 
     meshes[1]->render();
 
@@ -126,11 +157,13 @@ void SceneBasic_Uniform::render()
     model = glm::translate(model, vec3(0.0f, -0.45f, 0.0f));
     setMatrices();
 
-    texID = Texture::loadTexture("../Project_Template/media/texture/meadow.jpg");
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texID);
+    glBindTexture(GL_TEXTURE_2D, textureIDs[3]);
 
     plane.render();
+
+    // Delete textures
+    glDeleteTextures(4, textureIDs);
 }
 
 void SceneBasic_Uniform::setMatrices()

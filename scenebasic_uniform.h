@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "helper/plane.h"
 #include "helper/objmesh.h"
+#include "helper/skybox.h"
 
 class SceneBasic_Uniform : public Scene
 {
@@ -18,6 +19,8 @@ private:
     glm::mat4 rotationMatrix;
     Plane plane; // plane surface
     std::vector<std::unique_ptr<ObjMesh>> meshes; // pig mesh
+    SkyBox sky; //skybox
+    float angle, tPrev, rotSpeed;
 
     void compile();
     void setMatrices();
