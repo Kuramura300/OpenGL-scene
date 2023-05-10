@@ -2,17 +2,18 @@
 
 in vec3 Position;
 in vec3 Normal;
+in vec2 TexCoord;
 
-layout(binding = 0) uniform sampler2D RenderTex;
+layout (binding = 0) uniform sampler2D Tex1;
 
-uniform float EdgeThreshold;
-uniform int Pass;
-
-uniform struct LightInfo {
-	vec4 Position;
-	vec3 L; // diffuse and specular light
-	vec3 La; // ambient light
-} Light;
+uniform struct SpotLightInfo {
+	vec3 Position; // Position in cam coords
+	vec3 L; // Diffuse/spec intensity
+	vec3 La; // Amb intensity
+	vec3 Direction; // Direction of the spotlight in cam coords.
+	float Exponent; // Angular attenuation exponent
+	float Cutoff; // Cutoff angle (between 0 and pi/2)
+} Spot;
 
 uniform struct MaterialInfo {
     vec3 Ka; // Ambient reflectivity
@@ -22,8 +23,6 @@ uniform struct MaterialInfo {
 } Material;
 
 layout( location = 0 ) out vec4 FragColor;
-
-const vec3 lum = vec3(0.2126, 0.7152, 0.0722);
 
 vec3 blinnPhongSpot( vec3 position, vec3 n )
 {
