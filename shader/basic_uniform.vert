@@ -2,6 +2,8 @@
 
 layout (location = 0) in vec3 VertexPosition;
 layout (location = 1) in vec3 VertexNormal;
+layout (location = 2) in vec2 VertexTexCoord;
+layout (binding = 0) uniform sampler2D Tex1;
 
 out vec3 Colour;
 
@@ -22,19 +24,20 @@ uniform struct MaterialInfo {
     float Shininess; // Specular shininess factor
 } Material;
 
+// Phong shading
 vec3 phongModel( int light, vec3 position, vec3 n )
 {
-    //calculate ambient here, to access each light La value use this:
-    //lights[light].La
-    vec3 ambient = Material.Ka * lights[light].La;
+    // Calculate ambient using texture
+    vec3 texColour = texture(Tex1, VertexTexCoord).rgb;
+    vec3 ambient = texColour * lights[light].La;
 
-    //calculate diffuse here
-    vec3 s = vec3(lights[light].Position) - ( VertexPosition * lights[light].Position.w ); //find out s vector
+    // Calculate diffuse
+    vec3 s = vec3(lights[light].Position) - ( VertexPosition * lights[light].Position.w );
 
     float sDotN = max(dot(n, s), 0.0); //calculate dot product between s & n
     vec3 diffuse = Material.Kd * sDotN;
 
-    //calculate specular here
+    // Calculate specular
     vec3 spec = vec3(0.0);
     
     if( sDotN > 0.0 )
@@ -51,13 +54,12 @@ vec3 phongModel( int light, vec3 position, vec3 n )
 void main()
 {
     vec3 n = normalize( NormalMatrix * VertexNormal );
-    vec4 p = normalize( ModelViewMatrix * vec4( VertexPosition, 1.0 ) );
 
     vec3 camCoords = vec3(0.0);
 
     Colour = vec3(0.0);
     for( int i = 0; i < 3; i++ )
-        Colour += phongModel( i, camCoords, n ); // What is camCoords?
+        Colour += phongModel( i, camCoords, n );
 
     gl_Position = MVP * vec4(VertexPosition,1.0);
 }

@@ -8,7 +8,6 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "helper/torus.h"
 #include "helper/plane.h"
 #include "helper/objmesh.h"
 
@@ -18,7 +17,7 @@ private:
     GLSLProgram prog;
     glm::mat4 rotationMatrix;
     Plane plane; // plane surface
-    std::unique_ptr<ObjMesh> mesh; // pig mesh
+    std::vector<std::unique_ptr<ObjMesh>> meshes; // pig mesh
 
     void compile();
     void setMatrices();

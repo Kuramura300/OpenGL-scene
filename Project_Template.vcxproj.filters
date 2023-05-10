@@ -42,12 +42,6 @@
     <ClCompile Include="scenebasic_uniform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="helper\teapot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="helper\torus.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="helper\trianglemesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -56,6 +50,12 @@
     </ClCompile>
     <ClCompile Include="helper\plane.cpp">
       <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\stb\stb_image.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,15 +92,6 @@
     <ClInclude Include="helper\trianglemesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="helper\teapot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="helper\teapotdata.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="helper\torus.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="helper\drawable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -115,6 +106,9 @@
     </ClInclude>
     <ClInclude Include="helper\utils.h">
       <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\texture.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
