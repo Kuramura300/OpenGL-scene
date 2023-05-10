@@ -105,10 +105,11 @@ void SceneBasic_Uniform::render()
     textureIDs[2] = Texture::loadTexture("../Project_Template/media/texture/BlackGradient.png");
     textureIDs[3] = Texture::loadTexture("../Project_Template/media/texture/meadow.jpg");
 
-    // Skybox
+    // Camera
     vec3 cameraPos = vec3(3.0f * cos(angle), 1.0f, 3.0f * sin(angle));
     view = glm::lookAt(cameraPos, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
+    // Skybox
     prog.use();
     model = mat4(1.0f);
     setMatrices();
