@@ -11,7 +11,6 @@
 #include "helper/torus.h"
 #include "helper/plane.h"
 #include "helper/objmesh.h"
-#include "helper/teapot.h"
 
 class SceneBasic_Uniform : public Scene
 {
@@ -19,8 +18,6 @@ private:
     GLSLProgram prog;
     glm::mat4 rotationMatrix;
     Plane plane; // plane surface
-    Torus torus;
-    Teapot teapot;
     std::unique_ptr<ObjMesh> mesh; // pig mesh
 
     void compile();
