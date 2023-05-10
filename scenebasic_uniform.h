@@ -12,7 +12,6 @@
 #include "helper/plane.h"
 #include "helper/objmesh.h"
 #include "helper/teapot.h"
-#include "helper/cube.h"
 
 class SceneBasic_Uniform : public Scene
 {
@@ -22,7 +21,6 @@ private:
     Plane plane; // plane surface
     Torus torus;
     Teapot teapot;
-    Cube cube;
     std::unique_ptr<ObjMesh> mesh; // pig mesh
 
     void compile();
