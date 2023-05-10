@@ -18,6 +18,7 @@ using std::endl;
 
 #include "helper/glutils.h"
 #include "helper/texture.h"
+#include "helper/noisetex.h"
 
 using glm::vec3;
 using glm::mat4;
@@ -41,7 +42,7 @@ void SceneBasic_Uniform::initScene()
     projection = mat4(1.0f);
 
     // Set initial angle
-    angle = glm::radians(90.0f);
+    angle = glm::radians(0.0f);
 
     // Setup lights
     float x, z;
@@ -66,10 +67,16 @@ void SceneBasic_Uniform::initScene()
     prog.setUniform("lights[2].La", vec3(0.3f, 0.3f, 0.3f));
 
     //Set fog uniforms
-    prog.setUniform("Fog.MaxDist", 100.0f);
+    prog.setUniform("Fog.MaxDist", 120.0f);
     prog.setUniform("Fog.MinDist", 1.0f);
     prog.setUniform("Fog.Colour", vec3(1.0f, 1.0f, 1.0f));
 
+    // Load textures
+    textureIDs[0] = Texture::loadCubeMap("../Project_Template/media/texture/cube/skybox/sky");
+    textureIDs[1] = Texture::loadTexture("../Project_Template/media/texture/BlueGradient.png");
+    textureIDs[2] = Texture::loadTexture("../Project_Template/media/texture/BlackGradient.png");
+    textureIDs[3] = Texture::loadTexture("../Project_Template/media/texture/meadow.jpg");
+    textureIDs[4] = NoiseTex::generate2DTex(6.0f);
 }
 
 void SceneBasic_Uniform::compile()
@@ -103,13 +110,6 @@ void SceneBasic_Uniform::render()
     glClear(GL_COLOR_BUFFER_BIT);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    // Load textures
-    GLuint textureIDs[4];
-    textureIDs[0] = Texture::loadCubeMap("../Project_Template/media/texture/cube/skybox/sky");
-    textureIDs[1] = Texture::loadTexture("../Project_Template/media/texture/BlueGradient.png");
-    textureIDs[2] = Texture::loadTexture("../Project_Template/media/texture/BlackGradient.png");
-    textureIDs[3] = Texture::loadTexture("../Project_Template/media/texture/meadow.jpg");
-
     // Camera
     vec3 cameraPos = vec3(3.0f * cos(angle), 1.0f, 3.0f * sin(angle));
     view = glm::lookAt(cameraPos, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
@@ -122,6 +122,10 @@ void SceneBasic_Uniform::render()
     // Activate and bind texture
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureIDs[0]);
+
+    
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, textureIDs[4]);
 
     sky.render();
 
@@ -167,9 +171,6 @@ void SceneBasic_Uniform::render()
     glBindTexture(GL_TEXTURE_2D, textureIDs[3]);
 
     plane.render();
-
-    // Delete textures
-    glDeleteTextures(4, textureIDs);
 }
 
 void SceneBasic_Uniform::setMatrices()
