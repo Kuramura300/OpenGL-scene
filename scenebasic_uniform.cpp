@@ -138,6 +138,7 @@ void SceneBasic_Uniform::render()
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureIDs[0]);
 
+    prog.setUniform("noiseStrength", 0.2f);
     
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, textureIDs[4]);
@@ -152,6 +153,7 @@ void SceneBasic_Uniform::render()
     prog.setUniform("Material.Ks", 0.9f, 0.9f, 0.9f);
     prog.setUniform("Material.Ka", 0.1f, 0.1f, 0.1f);
     prog.setUniform("Material.Shininess", 180.0f);
+    prog.setUniform("noiseStrength", 0.0f);
 
     model = mat4(1.0f);
     model = glm::translate(model, vec3(0, 0.2f, -0.5f));
@@ -177,6 +179,7 @@ void SceneBasic_Uniform::render()
     prog.setUniform("Material.Ks", 0.9f, 0.9f, 0.9f);
     prog.setUniform("Material.Ka", 0.1f, 0.1f, 0.1f);
     prog.setUniform("Material.Shininess", 180.0f);
+    prog.setUniform("noiseStrength", 0.0f);
 
     model = mat4(1.0f);
     model = glm::translate(model, vec3(0.0f, -0.45f, 0.0f));
