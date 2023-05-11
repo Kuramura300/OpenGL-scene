@@ -23,8 +23,8 @@ using std::endl;
 using glm::vec3;
 using glm::mat4;
 
-SceneBasic_Uniform::SceneBasic_Uniform() : plane(10.0f, 10.0f, 100, 100), angle(0.0f), tPrev(0.0f),
-rotSpeed(glm::pi<float>() / 4.0f), sky(100.0f)
+SceneBasic_Uniform::SceneBasic_Uniform() : plane(10.0f, 10.0f, 100, 100), angle(0.0f), yAngle(1.0f), tPrev(0.0f),
+rotSpeed(glm::pi<float>() / 4.0f), yRotSpeed(glm::pi<float>() / 1.0f), sky(100.0f)
 {
     // Load models from file
     meshes.push_back(ObjMesh::load("../Project_Template/media/charactermodel.obj", true));
@@ -101,6 +101,7 @@ void SceneBasic_Uniform::update( float t )
 
     tPrev = t;
 
+    // Camera left/right rotation
     if (autoCameraRotation == true)
     {
         rotSpeed = glm::pi<float>() / 28.0f;
@@ -117,6 +118,20 @@ void SceneBasic_Uniform::update( float t )
         else if (turnCameraRight == true) angle -= rotSpeed * deltaT;
     }
 
+    // Camera up/down rotation based on input
+    if (turnCameraUp == true)
+    {
+        yAngle += yRotSpeed * deltaT;
+
+        if (yAngle > 5.0f) yAngle = 5.0f;
+    }
+    else if (turnCameraDown == true)
+    {
+        yAngle -= yRotSpeed * deltaT;
+
+        if (yAngle < 0.0f) yAngle = 0.0f;
+    }
+
     if (angle > glm::two_pi<float>()) angle -= glm::two_pi<float>();
 }
 
@@ -126,7 +141,7 @@ void SceneBasic_Uniform::render()
     glClear(GL_DEPTH_BUFFER_BIT);
 
     // Camera
-    vec3 cameraPos = vec3(3.0f * cos(angle), 1.0f, 3.0f * sin(angle));
+    vec3 cameraPos = vec3(3.0f * cos(angle), yAngle, 3.0f * sin(angle));
     view = glm::lookAt(cameraPos, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
     // Skybox
@@ -134,7 +149,6 @@ void SceneBasic_Uniform::render()
     model = mat4(1.0f);
     setMatrices();
 
-    // Activate and bind texture
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureIDs[0]);
 
@@ -232,12 +246,30 @@ void SceneBasic_Uniform::input(int key, int action)
         printf("D has been pressed! Moving camera right.\n");
     }
 
+    // Move camera up on S press
+    else if (key == GLFW_KEY_S && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        turnCameraUp = true;
+        turnCameraDown = false;
+
+        printf("S has been pressed! Moving camera up.\n");
+    }
+
+    // Move camera down on W press
+    else if (key == GLFW_KEY_W && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        turnCameraUp = false;
+        turnCameraDown = true;
+
+        printf("W has been pressed! Moving camera down.\n");
+    }
+
     // Toggle auto camera rotation on R press
     else if (key == GLFW_KEY_R && action == GLFW_PRESS)
     {
         autoCameraRotation = !autoCameraRotation;
 
-        printf("R has been pressed! Toggling automatic camera rotation. Manual camera movement is not available during automatic camera rotation.\n");
+        printf("R has been pressed! Toggling automatic camera rotation. Left/right camera movement is not available during automatic camera rotation.\n");
     }
 
     // Toggle fog on F press
@@ -263,5 +295,8 @@ void SceneBasic_Uniform::input(int key, int action)
     {
         turnCameraLeft = false;
         turnCameraRight = false;
+
+        turnCameraUp = false;
+        turnCameraDown = false;
     }
 }
