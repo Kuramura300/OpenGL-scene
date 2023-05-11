@@ -16,7 +16,6 @@ class SceneBasic_Uniform : public Scene
 {
 private:
     GLSLProgram prog;
-    glm::mat4 rotationMatrix;
     Plane plane; // plane surface
     std::vector<std::unique_ptr<ObjMesh>> meshes; // pig mesh
     SkyBox sky; //skybox
