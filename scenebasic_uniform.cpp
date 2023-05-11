@@ -192,3 +192,19 @@ void SceneBasic_Uniform::resize(int w, int h)
         0.3f, 100.0f);
 
 }
+
+// Do actions based on input
+void SceneBasic_Uniform::input(int key, int action)
+{
+    // Move camera left on A press
+    if (key == GLFW_KEY_A && ( action == GLFW_REPEAT || action == GLFW_PRESS ))
+    {
+        printf("A has been pressed!\n");
+    }
+
+    // Move camera left on D press
+    else if (key == GLFW_KEY_D && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        printf("D has been pressed!\n");
+    }
+}

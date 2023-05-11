@@ -11,11 +11,15 @@
 #include <fstream>
 #include <iostream>
 
+
+
 class SceneRunner {
 private:
     GLFWwindow * window;
     int fbw, fbh;
 	bool debug;           // Set true to enable debug messages
+    static int keyPressed;
+    static int actionPressed;
 
 public:
     SceneRunner(const std::string & windowTitle, int width = WIN_WIDTH, int height = WIN_HEIGHT, int samples = 0) : debug(true) {
@@ -116,9 +120,38 @@ private:
         }
     }
 
+    // Listen for input
+    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    {
+        // Close on 'ESCAPE'
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        {
+            printf("[Debug] ESCAPE pressed\n");
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+        }
+        
+        keyPressed = key;
+        actionPressed = action;
+    }
+
     void mainLoop(GLFWwindow * window, Scene & scene) {
+
+        keyPressed = -1;
+        actionPressed = -1;
+
+        glfwSetKeyCallback(window, key_callback);
+
         while( ! glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE) ) {
             GLUtils::checkForOpenGLError(__FILE__,__LINE__);
+
+            // If received input, send input to the scene
+            if (SceneRunner::keyPressed != -1)
+            {
+                scene.input(SceneRunner::keyPressed, SceneRunner::actionPressed);
+
+                SceneRunner::keyPressed = -1;
+                SceneRunner::actionPressed = -1;
+            }
 			
             scene.update(float(glfwGetTime()));
             scene.render();
@@ -131,3 +164,6 @@ private:
         }
     }
 };
+
+int SceneRunner::keyPressed = 0;
+int SceneRunner::actionPressed = 0;

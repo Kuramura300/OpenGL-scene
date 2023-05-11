@@ -11,6 +11,7 @@
 #include "helper/plane.h"
 #include "helper/objmesh.h"
 #include "helper/skybox.h"
+#include <GLFW/glfw3.h>
 
 class SceneBasic_Uniform : public Scene
 {
@@ -32,6 +33,7 @@ public:
     void update( float t );
     void render();
     void resize(int, int);
+    void input(int key, int action);
 };
 
 #endif // SCENEBASIC_UNIFORM_H
