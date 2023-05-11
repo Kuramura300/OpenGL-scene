@@ -152,7 +152,7 @@ void SceneBasic_Uniform::render()
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureIDs[0]);
 
-    prog.setUniform("noiseStrength", 0.2f);
+    prog.setUniform("noiseStrength", 0.3f);
     
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, textureIDs[4]);
