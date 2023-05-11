@@ -24,7 +24,7 @@ using glm::vec3;
 using glm::mat4;
 
 SceneBasic_Uniform::SceneBasic_Uniform() : plane(10.0f, 10.0f, 100, 100), angle(0.0f), yAngle(1.0f), tPrev(0.0f),
-rotSpeed(glm::pi<float>() / 4.0f), yRotSpeed(glm::pi<float>() / 1.0f), sky(100.0f)
+rotSpeed(glm::pi<float>() / 4.0f), yRotSpeed(glm::pi<float>() / 1.0f), zoom(3.0f), sky(100.0f)
 {
     // Load models from file
     meshes.push_back(ObjMesh::load("../Project_Template/media/charactermodel.obj", true));
@@ -132,6 +132,20 @@ void SceneBasic_Uniform::update( float t )
         if (yAngle < 0.0f) yAngle = 0.0f;
     }
 
+    // Zoom camera in/out based on input
+    if (moveCameraIn == true)
+    {
+        zoom -= 2 * deltaT;
+
+        if (zoom < 1.0f) zoom = 1.0f;
+    }
+    else if (moveCameraOut == true)
+    {
+        zoom += 2 * deltaT;
+
+        if (zoom > 10.0f) zoom = 10.0f;
+    }
+
     if (angle > glm::two_pi<float>()) angle -= glm::two_pi<float>();
 }
 
@@ -141,7 +155,7 @@ void SceneBasic_Uniform::render()
     glClear(GL_DEPTH_BUFFER_BIT);
 
     // Camera
-    vec3 cameraPos = vec3(3.0f * cos(angle), yAngle, 3.0f * sin(angle));
+    vec3 cameraPos = vec3(zoom * cos(angle), yAngle, zoom * sin(angle));
     view = glm::lookAt(cameraPos, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
     // Skybox
@@ -264,6 +278,24 @@ void SceneBasic_Uniform::input(int key, int action)
         printf("W has been pressed! Moving camera down.\n");
     }
 
+    // Move camera in on I press
+    else if (key == GLFW_KEY_I && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        moveCameraIn = true;
+        moveCameraOut = false;
+
+        printf("I has been pressed! Moving camera in.\n");
+    }
+
+    // Move camera out on K press
+    else if (key == GLFW_KEY_K && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        moveCameraIn = false;
+        moveCameraOut = true;
+
+        printf("K has been pressed! Moving camera out.\n");
+    }
+
     // Toggle auto camera rotation on R press
     else if (key == GLFW_KEY_R && action == GLFW_PRESS)
     {
@@ -298,5 +330,8 @@ void SceneBasic_Uniform::input(int key, int action)
 
         turnCameraUp = false;
         turnCameraDown = false;
+
+        moveCameraIn = false;
+        moveCameraOut = false;
     }
 }

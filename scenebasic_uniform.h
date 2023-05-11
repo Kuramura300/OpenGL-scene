@@ -20,7 +20,7 @@ private:
     Plane plane; // plane surface
     std::vector<std::unique_ptr<ObjMesh>> meshes; // pig mesh
     SkyBox sky; //skybox
-    float angle, yAngle, tPrev, rotSpeed, yRotSpeed;
+    float angle, yAngle, tPrev, rotSpeed, yRotSpeed, zoom;
     GLuint textureIDs[5];
 
     bool turnCameraLeft = false;
@@ -28,6 +28,9 @@ private:
 
     bool turnCameraUp = false;
     bool turnCameraDown = false;
+
+    bool moveCameraIn = false;
+    bool moveCameraOut = false;
 
     bool autoCameraRotation = false;
     bool enableFog = true;
