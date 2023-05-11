@@ -24,6 +24,9 @@ private:
     GLuint textureIDs[5];
     bool turnCameraLeft = false;
     bool turnCameraRight = false;
+    bool autoCameraRotation = false;
+    bool enableFog = true;
+    bool enableClouds = true;
 
     void compile();
     void setMatrices();

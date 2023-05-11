@@ -70,6 +70,7 @@ void SceneBasic_Uniform::initScene()
     prog.setUniform("Fog.MaxDist", 120.0f);
     prog.setUniform("Fog.MinDist", 1.0f);
     prog.setUniform("Fog.Colour", vec3(1.0f, 1.0f, 1.0f));
+    prog.setUniform("Fog.Enabled", enableFog);
 
     // Load textures
     textureIDs[0] = Texture::loadCubeMap("../Project_Template/media/texture/cube/skybox/sky");
@@ -100,9 +101,21 @@ void SceneBasic_Uniform::update( float t )
 
     tPrev = t;
 
-    // Camera movement based on input
-    if (turnCameraLeft == true) angle += rotSpeed * deltaT;
-    else if (turnCameraRight == true) angle -= rotSpeed * deltaT;
+    if (autoCameraRotation == true)
+    {
+        rotSpeed = glm::pi<float>() / 28.0f;
+
+        // Auto turn the camera
+        angle += rotSpeed * deltaT;
+    }
+    else
+    {
+        rotSpeed = glm::pi<float>() / 4.0f;
+
+        // Camera movement based on input
+        if (turnCameraLeft == true) angle += rotSpeed * deltaT;
+        else if (turnCameraRight == true) angle -= rotSpeed * deltaT;
+    }
 
     if (angle > glm::two_pi<float>()) angle -= glm::two_pi<float>();
 }
@@ -204,7 +217,7 @@ void SceneBasic_Uniform::input(int key, int action)
         turnCameraLeft = true;
         turnCameraRight = false;
 
-        printf("A has been pressed!\n");
+        printf("A has been pressed! Moving camera left.\n");
     }
 
     // Move camera left on D press
@@ -213,7 +226,33 @@ void SceneBasic_Uniform::input(int key, int action)
         turnCameraLeft = false;
         turnCameraRight = true;
 
-        printf("D has been pressed!\n");
+        printf("D has been pressed! Moving camera right.\n");
+    }
+
+    // Toggle auto camera rotation on R press
+    else if (key == GLFW_KEY_R && action == GLFW_PRESS)
+    {
+        autoCameraRotation = !autoCameraRotation;
+
+        printf("R has been pressed! Toggling automatic camera rotation. Manual camera movement is not available during automatic camera rotation.\n");
+    }
+
+    // Toggle fog on F press
+    else if (key == GLFW_KEY_F &&  action == GLFW_PRESS)
+    {
+        enableFog = !enableFog;
+        prog.setUniform("Fog.Enabled", enableFog);
+
+        printf("F has been pressed! Toggling fog.\n");
+    }
+
+    // Toggle clouds on C press
+    else if (key == GLFW_KEY_C && action == GLFW_PRESS)
+    {
+        enableClouds = !enableClouds;
+        prog.setUniform("cloudsEnabled", enableClouds);
+
+        printf("C has been pressed! Toggling clouds.\n");
     }
 
     // Stop input

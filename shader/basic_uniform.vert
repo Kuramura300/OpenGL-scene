@@ -29,6 +29,7 @@ uniform struct FogInfo {
     float MaxDist;
     float MinDist;
     vec3 Colour;
+    bool Enabled;
 } Fog;
 
 // Phong shading
@@ -73,7 +74,10 @@ void main()
     for( int i = 0; i < 3; i++ )
         Colour += phongModel( i, camCoords, n );
 
+    if (Fog.Enabled == true)
+    {
     Colour = mix(Fog.Colour, Colour, fogFactor);
+    }
 
     Vec = VertexPosition;
 
