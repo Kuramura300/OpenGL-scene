@@ -70,13 +70,14 @@ void main()
 
     vec3 camCoords = vec3(0.0);
 
+    // Apply phong shading
     Colour = vec3(0.0);
     for( int i = 0; i < 3; i++ )
         Colour += phongModel( i, camCoords, n );
 
     if (Fog.Enabled == true)
     {
-    Colour = mix(Fog.Colour, Colour, fogFactor);
+        Colour = mix(Fog.Colour, Colour, fogFactor);
     }
 
     Vec = VertexPosition;
