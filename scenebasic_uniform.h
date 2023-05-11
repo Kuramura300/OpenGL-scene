@@ -22,6 +22,8 @@ private:
     SkyBox sky; //skybox
     float angle, tPrev, rotSpeed;
     GLuint textureIDs[5];
+    bool turnCameraLeft = false;
+    bool turnCameraRight = false;
 
     void compile();
     void setMatrices();

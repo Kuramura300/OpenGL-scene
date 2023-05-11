@@ -24,7 +24,7 @@ using glm::vec3;
 using glm::mat4;
 
 SceneBasic_Uniform::SceneBasic_Uniform() : plane(10.0f, 10.0f, 100, 100), angle(0.0f), tPrev(0.0f),
-rotSpeed(glm::pi<float>() / 28.0f), sky(100.0f)
+rotSpeed(glm::pi<float>() / 4.0f), sky(100.0f)
 {
     // Load models from file
     meshes.push_back(ObjMesh::load("../Project_Template/media/charactermodel.obj", true));
@@ -100,7 +100,9 @@ void SceneBasic_Uniform::update( float t )
 
     tPrev = t;
 
-    angle += rotSpeed * deltaT;
+    // Camera movement based on input
+    if (turnCameraLeft == true) angle += rotSpeed * deltaT;
+    else if (turnCameraRight == true) angle -= rotSpeed * deltaT;
 
     if (angle > glm::two_pi<float>()) angle -= glm::two_pi<float>();
 }
@@ -199,12 +201,25 @@ void SceneBasic_Uniform::input(int key, int action)
     // Move camera left on A press
     if (key == GLFW_KEY_A && ( action == GLFW_REPEAT || action == GLFW_PRESS ))
     {
+        turnCameraLeft = true;
+        turnCameraRight = false;
+
         printf("A has been pressed!\n");
     }
 
     // Move camera left on D press
     else if (key == GLFW_KEY_D && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
+        turnCameraLeft = false;
+        turnCameraRight = true;
+
         printf("D has been pressed!\n");
+    }
+
+    // Stop input
+    else
+    {
+        turnCameraLeft = false;
+        turnCameraRight = false;
     }
 }
