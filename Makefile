@@ -1,4 +1,4 @@
-.PHONY: clean build package all
+.PHONY: clean build package all test
 .DEFAULT_GOAL=all
 
 clean::
@@ -14,3 +14,6 @@ package:: build
 	cp -av /mingw64/bin/glfw3.dll build/Release/
 
 all:: package
+
+test:: package
+	./build/Release/OpenGL-scene
