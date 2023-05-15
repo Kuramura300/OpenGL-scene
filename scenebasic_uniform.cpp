@@ -27,8 +27,8 @@ SceneBasic_Uniform::SceneBasic_Uniform() : plane(10.0f, 10.0f, 100, 100), angle(
 rotSpeed(glm::pi<float>() / 4.0f), yRotSpeed(glm::pi<float>() / 1.0f), zoom(3.0f), sky(100.0f)
 {
     // Load models from file
-    meshes.push_back(ObjMesh::load("../Project_Template/media/charactermodel.obj", true));
-    meshes.push_back(ObjMesh::load("../Project_Template/media/charactermodel2.obj", true));
+    meshes.push_back(ObjMesh::load("media/charactermodel.obj", true));
+    meshes.push_back(ObjMesh::load("media/charactermodel2.obj", true));
 }
 
 void SceneBasic_Uniform::initScene()
@@ -73,10 +73,10 @@ void SceneBasic_Uniform::initScene()
     prog.setUniform("Fog.Enabled", enableFog);
 
     // Load textures
-    textureIDs[0] = Texture::loadCubeMap("../Project_Template/media/texture/cube/skybox/sky");
-    textureIDs[1] = Texture::loadTexture("../Project_Template/media/texture/BlueGradient.png");
-    textureIDs[2] = Texture::loadTexture("../Project_Template/media/texture/BlackGradient.png");
-    textureIDs[3] = Texture::loadTexture("../Project_Template/media/texture/meadow.jpg");
+    textureIDs[0] = Texture::loadCubeMap("media/texture/cube/skybox/sky");
+    textureIDs[1] = Texture::loadTexture("media/texture/BlueGradient.png");
+    textureIDs[2] = Texture::loadTexture("media/texture/BlackGradient.png");
+    textureIDs[3] = Texture::loadTexture("media/texture/meadow.jpg");
     textureIDs[4] = NoiseTex::generate2DTex(6.0f);
 }
 
