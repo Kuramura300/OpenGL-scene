@@ -30,8 +30,6 @@ Then, open `Project_Template.sln` and build the project.
 The built binaries, as well as all required dynamic libraries and data files will be copied to the `x64/` directory.
 
 ## How does the program work?
-// How do the classes and functions fit together and who does what?
-
 ### User Interaction
 * The camera can be moved around using WASD
   * W moves the camera down
