@@ -28,3 +28,26 @@ git clone --recursive git@github.com:Kuramura300/OpenGL-scene.git
 Then, open `Project_Template.sln` and build the project.
 
 The built binaries, as well as all required dynamic libraries and data files will be copied to the `x64/` directory.
+
+## How does the program work?
+// How do the classes and functions fit together and who does what?
+
+### User Interaction
+* The camera can be moved around using WASD
+  * W moves the camera down
+  * A moves the camera left
+  * S moves the camera up
+  * D moves the camera right
+* The camera can be zoomed in and out
+  * I moves the camera in
+  * K moves the camera out
+* Automatic camera rotation is toggled by pressing R
+* Fog is toggled by pressing F
+* Clouds are toggled by pressing C
+* The application can be closed by pressing ESCAPE
+
+### Shading
+* Phong shading is applied to each object in the vertex shader using the phongModel() function
+* Fog is calculated based on a minimum and maximum distance and used if it is enabled
+* A skybox using a cubemap is added in the fragment shader
+* Clouds are added to the skybox using a noise texture if it is enabled
