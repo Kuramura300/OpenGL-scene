@@ -1,2 +1,4 @@
-# Project_Template
- COMP3015
+# OpenGL-scene
+A simple OpenGL scene demonstrating some shader techniques.
+
+## How to run
