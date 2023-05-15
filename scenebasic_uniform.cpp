@@ -18,11 +18,13 @@ using std::endl;
 
 #include "helper/glutils.h"
 #include "helper/texture.h"
+#include "helper/noisetex.h"
 
 using glm::vec3;
 using glm::mat4;
 
-SceneBasic_Uniform::SceneBasic_Uniform() : plane(10.0f, 10.0f, 100, 100)
+SceneBasic_Uniform::SceneBasic_Uniform() : plane(10.0f, 10.0f, 100, 100), angle(0.0f), yAngle(1.0f), tPrev(0.0f),
+rotSpeed(glm::pi<float>() / 4.0f), yRotSpeed(glm::pi<float>() / 1.0f), zoom(3.0f), sky(100.0f)
 {
     // Load models from file
     meshes.push_back(ObjMesh::load("../Project_Template/media/charactermodel.obj", true));
@@ -38,6 +40,9 @@ void SceneBasic_Uniform::initScene()
     // Setup camera view
     view = glm::lookAt(vec3(0.5f, 0.75f, 0.75f), vec3(0.0f, 0.25f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
     projection = mat4(1.0f);
+
+    // Set initial angle
+    angle = glm::radians(0.0f);
 
     // Setup lights
     float x, z;
@@ -61,6 +66,18 @@ void SceneBasic_Uniform::initScene()
     prog.setUniform("lights[1].La", vec3(0.1f, 0.1f, 0.1f));
     prog.setUniform("lights[2].La", vec3(0.3f, 0.3f, 0.3f));
 
+    //Set fog uniforms
+    prog.setUniform("Fog.MaxDist", 120.0f);
+    prog.setUniform("Fog.MinDist", 1.0f);
+    prog.setUniform("Fog.Colour", vec3(1.0f, 1.0f, 1.0f));
+    prog.setUniform("Fog.Enabled", enableFog);
+
+    // Load textures
+    textureIDs[0] = Texture::loadCubeMap("../Project_Template/media/texture/cube/skybox/sky");
+    textureIDs[1] = Texture::loadTexture("../Project_Template/media/texture/BlueGradient.png");
+    textureIDs[2] = Texture::loadTexture("../Project_Template/media/texture/BlackGradient.png");
+    textureIDs[3] = Texture::loadTexture("../Project_Template/media/texture/meadow.jpg");
+    textureIDs[4] = NoiseTex::generate2DTex(6.0f);
 }
 
 void SceneBasic_Uniform::compile()
@@ -78,7 +95,58 @@ void SceneBasic_Uniform::compile()
 
 void SceneBasic_Uniform::update( float t )
 {
-	
+    float deltaT = t - tPrev;
+
+    if (tPrev == 0.0f) deltaT = 0.0f;
+
+    tPrev = t;
+
+    // Camera left/right rotation
+    if (autoCameraRotation == true)
+    {
+        rotSpeed = glm::pi<float>() / 28.0f;
+
+        // Auto turn the camera
+        angle += rotSpeed * deltaT;
+    }
+    else
+    {
+        rotSpeed = glm::pi<float>() / 4.0f;
+
+        // Camera movement based on input
+        if (turnCameraLeft == true) angle += rotSpeed * deltaT;
+        else if (turnCameraRight == true) angle -= rotSpeed * deltaT;
+    }
+
+    // Camera up/down rotation based on input
+    if (turnCameraUp == true)
+    {
+        yAngle += yRotSpeed * deltaT;
+
+        if (yAngle > 5.0f) yAngle = 5.0f;
+    }
+    else if (turnCameraDown == true)
+    {
+        yAngle -= yRotSpeed * deltaT;
+
+        if (yAngle < 0.0f) yAngle = 0.0f;
+    }
+
+    // Zoom camera in/out based on input
+    if (moveCameraIn == true)
+    {
+        zoom -= 2 * deltaT;
+
+        if (zoom < 1.0f) zoom = 1.0f;
+    }
+    else if (moveCameraOut == true)
+    {
+        zoom += 2 * deltaT;
+
+        if (zoom > 10.0f) zoom = 10.0f;
+    }
+
+    if (angle > glm::two_pi<float>()) angle -= glm::two_pi<float>();
 }
 
 void SceneBasic_Uniform::render()
@@ -86,15 +154,34 @@ void SceneBasic_Uniform::render()
     glClear(GL_COLOR_BUFFER_BIT);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    // Draw first character
-    GLuint texID = Texture::loadTexture("../Project_Template/media/texture/BlueGradient.png");
+    // Camera
+    vec3 cameraPos = vec3(zoom * cos(angle), yAngle, zoom * sin(angle));
+    view = glm::lookAt(cameraPos, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+
+    // Skybox
+    prog.use();
+    model = mat4(1.0f);
+    setMatrices();
+
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureIDs[0]);
+
+    prog.setUniform("noiseStrength", 0.3f);
+    
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, textureIDs[4]);
+
+    sky.render();
+
+    // Draw first character
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureIDs[1]);
 
     prog.setUniform("Material.Kd", 0.1f, 0.1f, 0.1f);
     prog.setUniform("Material.Ks", 0.9f, 0.9f, 0.9f);
     prog.setUniform("Material.Ka", 0.1f, 0.1f, 0.1f);
     prog.setUniform("Material.Shininess", 180.0f);
+    prog.setUniform("noiseStrength", 0.0f);
 
     model = mat4(1.0f);
     model = glm::translate(model, vec3(0, 0.2f, -0.5f));
@@ -110,9 +197,8 @@ void SceneBasic_Uniform::render()
     model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
     setMatrices();
 
-    texID = Texture::loadTexture("../Project_Template/media/texture/BlackGradient.png");
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texID);
+    glBindTexture(GL_TEXTURE_2D, textureIDs[2]);
 
     meshes[1]->render();
 
@@ -121,14 +207,14 @@ void SceneBasic_Uniform::render()
     prog.setUniform("Material.Ks", 0.9f, 0.9f, 0.9f);
     prog.setUniform("Material.Ka", 0.1f, 0.1f, 0.1f);
     prog.setUniform("Material.Shininess", 180.0f);
+    prog.setUniform("noiseStrength", 0.0f);
 
     model = mat4(1.0f);
     model = glm::translate(model, vec3(0.0f, -0.45f, 0.0f));
     setMatrices();
 
-    texID = Texture::loadTexture("../Project_Template/media/texture/meadow.jpg");
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texID);
+    glBindTexture(GL_TEXTURE_2D, textureIDs[3]);
 
     plane.render();
 }
@@ -151,4 +237,101 @@ void SceneBasic_Uniform::resize(int w, int h)
     projection = glm::perspective(glm::radians(70.0f), (float)w / h,
         0.3f, 100.0f);
 
+}
+
+// Do actions based on input
+void SceneBasic_Uniform::input(int key, int action)
+{
+    // Move camera left on A press
+    if (key == GLFW_KEY_A && ( action == GLFW_REPEAT || action == GLFW_PRESS ))
+    {
+        turnCameraLeft = true;
+        turnCameraRight = false;
+
+        printf("A has been pressed! Moving camera left.\n");
+    }
+
+    // Move camera left on D press
+    else if (key == GLFW_KEY_D && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        turnCameraLeft = false;
+        turnCameraRight = true;
+
+        printf("D has been pressed! Moving camera right.\n");
+    }
+
+    // Move camera up on S press
+    else if (key == GLFW_KEY_S && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        turnCameraUp = true;
+        turnCameraDown = false;
+
+        printf("S has been pressed! Moving camera up.\n");
+    }
+
+    // Move camera down on W press
+    else if (key == GLFW_KEY_W && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        turnCameraUp = false;
+        turnCameraDown = true;
+
+        printf("W has been pressed! Moving camera down.\n");
+    }
+
+    // Move camera in on I press
+    else if (key == GLFW_KEY_I && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        moveCameraIn = true;
+        moveCameraOut = false;
+
+        printf("I has been pressed! Moving camera in.\n");
+    }
+
+    // Move camera out on K press
+    else if (key == GLFW_KEY_K && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
+        moveCameraIn = false;
+        moveCameraOut = true;
+
+        printf("K has been pressed! Moving camera out.\n");
+    }
+
+    // Toggle auto camera rotation on R press
+    else if (key == GLFW_KEY_R && action == GLFW_PRESS)
+    {
+        autoCameraRotation = !autoCameraRotation;
+
+        printf("R has been pressed! Toggling automatic camera rotation. Left/right camera movement is not available during automatic camera rotation.\n");
+    }
+
+    // Toggle fog on F press
+    else if (key == GLFW_KEY_F &&  action == GLFW_PRESS)
+    {
+        enableFog = !enableFog;
+        prog.setUniform("Fog.Enabled", enableFog);
+
+        printf("F has been pressed! Toggling fog.\n");
+    }
+
+    // Toggle clouds on C press
+    else if (key == GLFW_KEY_C && action == GLFW_PRESS)
+    {
+        enableClouds = !enableClouds;
+        prog.setUniform("cloudsEnabled", enableClouds);
+
+        printf("C has been pressed! Toggling clouds.\n");
+    }
+
+    // Stop input
+    else
+    {
+        turnCameraLeft = false;
+        turnCameraRight = false;
+
+        turnCameraUp = false;
+        turnCameraDown = false;
+
+        moveCameraIn = false;
+        moveCameraOut = false;
+    }
 }
