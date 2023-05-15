@@ -49,3 +49,14 @@ The built binaries, as well as all required dynamic libraries and data files wil
 * Fog is calculated based on a minimum and maximum distance and used if it is enabled
 * A skybox using a cubemap is added in the fragment shader
 * Clouds are added to the skybox using a noise texture if it is enabled
+
+## What the project started as
+This project started from a template project. The following is the list of contributions I made to the template:
+* Added 3 lights to the scene.
+* Lighting using phong shading in the vertex shader.
+* 2 custom character models loaded in using the provided obj loader.
+* Render textures using the vertex shader.
+* Added fog effect in vertex shader.
+* Added skybox using a cubemap in fragment shader.
+* Added clouds from a noise texture on skybox in fragment shader.
+* Added camera controls and toggles for settings using keyboard input.
