@@ -50,7 +50,7 @@ The built binaries, as well as all required dynamic libraries and data files wil
 * A skybox using a cubemap is added in the fragment shader
 * Clouds are added to the skybox using a noise texture if it is enabled
 
-## What the project started as
+## What I've contributed to the project
 This project started from a template project. The following is the list of contributions I made to the template:
 * Added 3 lights to the scene.
 * Lighting using phong shading in the vertex shader.
